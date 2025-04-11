@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User - View Offers - RMS Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .navbar {
+            background-color: #1a2a44;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .nav-links li {
+            margin-left: 2rem;
+        }
+
+        .navbar .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 400;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #ff6f61;
+        }
+
+        .offers-container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 2rem;
+        }
+
+        .restaurant-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .restaurant-header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #1a2a44;
+        }
+
+        .offer-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .offer-item {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .offer-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .offer-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #f0f0f0; /* Placeholder background if image fails */
+        }
+
+        .offer-item .item-details h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .original-price {
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: line-through;
+            margin-bottom: 5px;
+        }
+
+        .offer-price {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ff6f61;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart {
+            background-color: #ff6f61;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        .add-to-cart:hover {
+            background-color: #e65b50;
+        }
+
+        footer {
+            background-color: #1a2a44;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.9rem;
+            font-weight: 300;
+            margin-top: 3rem;
+        }
+
+        footer a {
+            color: #ff6f61;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #e65b50;
+        }
+
+        @media (max-width: 768px) {
+            .offer-items {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            .navbar .nav-links {
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+            .navbar .nav-links li {
+                margin: 0.5rem 0;
+            }
+            .offer-items {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">RMS</div>
+        <ul class="nav-links">
+            <li><a href="home.html">HOME</a></li>
+            <li><a href="menu.html">MENU</a></li>
+            <li><a href="dinein.html">DINE IN</a></li>
+            <li><a href="events.html">EVENT HALLS</a></li>
+            <li><a href="cart.html">CART</a></li>
+            <li><a href="#" onclick="logout()">LOGOUT</a></li>
+        </ul>
+    </nav>
+
+    <div class="offers-container">
+        <div class="restaurant-header">
+            <h1>Special Offers</h1>
+        </div>
+        <div id="offer-list" class="offer-items"></div>
+    </div>
+
+    <footer>
+        <p>© 2025 Restaurant Management System. All rights reserved. | 
+            <a href="#">Privacy Policy</a> | 
+            <a href="#">Terms of Service</a>
+        </p>
+    </footer>
+
+    <script>
+        const email = localStorage.getItem("userEmail");
+        if (!email) {
+            window.location.href = "user_login.html";
+        }
+
+        async function fetchOffers() {
+            const offerList = document.getElementById("offer-list");
+            try {
+                const response = await fetch("http://localhost:5000/offers", {
+                    method: "GET",
+                    headers: { "Content-Type": "application/json" }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const offers = await response.json();
+                console.log("Offers data:", offers); // Detailed debug log
+                offerList.innerHTML = "";
+
+                if (offers.length === 0) {
+                    offerList.innerHTML = "<p>No offers available.</p>";
+                    return;
+                }
+
+                offers.forEach(offer => {
+                    const originalPrice = parseFloat(offer.originalPrice.replace('₹', '')) || 0;
+                    const offerPrice = parseFloat(offer.offerPrice.replace('₹', '')) || 0;
+                    const itemId = offer._id || Date.now();
+                    // Handle external URLs correctly
+                    const imageUrl = offer.image.startsWith('http') ? offer.image : `http://localhost:5000${offer.image}`;
+                    console.log(`Processing offer: ${offer.itemName}, Image URL: ${imageUrl}`); // Debug each offer
+
+                    const offerItem = document.createElement("div");
+                    offerItem.classList.add("offer-item");
+                    offerItem.innerHTML = `
+                        <img src="${imageUrl}" alt="${offer.itemName}" 
+                             onerror="this.src='http://localhost:5000/images/placeholder.jpg'; console.log('Image load failed for ${offer.itemName}, using placeholder');" />
+                        <div class="item-details">
+                            <h3>${offer.itemName}</h3>
+                            ${originalPrice > offerPrice ? `<p class="original-price">₹${originalPrice.toFixed(2)}</p>` : ''}
+                            <p class="offer-price">₹${offerPrice.toFixed(2)}</p>
+                            <button class="add-to-cart" data-id="${itemId}" data-name="${offer.itemName}" data-price="${offerPrice}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    `;
+                    offerList.appendChild(offerItem);
+                });
+
+                document.querySelectorAll(".add-to-cart").forEach(button => {
+                    button.addEventListener("click", async () => {
+                        const itemId = button.getAttribute("data-id");
+                        const itemName = button.getAttribute("data-name");
+                        const itemPrice = parseFloat(button.getAttribute("data-price"));
+                        await addToCart(itemId, itemName, itemPrice);
+                    });
+                });
+            } catch (error) {
+                console.error("Fetch error:", error);
+                offerList.innerHTML = `<p>Failed to load offers. Error: ${error.message}</p>`;
+            }
+        }
+
+        async function addToCart(itemId, itemName, itemPrice) {
+            if (!email || isNaN(itemPrice) || itemPrice <= 0) {
+                console.error("Invalid cart data:", { email, itemId, itemName, itemPrice });
+                alert("Please log in or check item price.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/cart/add", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, itemId, name: itemName, price: itemPrice })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(`${itemName} added to cart!`);
+                } else {
+                    alert(`Failed to add ${itemName}: ${data.message || "Unknown error"}`);
+                }
+            } catch (error) {
+                console.error("Cart error:", error);
+                alert("Error adding to cart. Please try again.");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("userEmail");
+            window.location.href = "index.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchOffers();
+        });
+    </script>
+</body>
+</html>
